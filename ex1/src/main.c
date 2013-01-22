@@ -62,4 +62,5 @@ int main(int argc, char** argv){
 
     // Print result (last element on stack)
     printf("%f\n", peek(&rpnCalc));
+    free(rpnCalc.stack);
 }
