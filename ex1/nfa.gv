@@ -1,0 +1,15 @@
+digraph {
+    graph [ rankdir=LR, size="8.5", overlap=false ];
+    node [ shape = doublecircle ];
+    suffix [ label = SF ];
+    node [ shape = point ];
+    qi;
+    node [ shape = circle ];
+    root [ label = S ];
+    qi -> root ;
+    root -> S1 [label =  "1"];
+    S1 -> S1 [label = "0/1" ];
+    S1 -> S2 [label = "00"];
+    S2 -> S2 [label = "0/1"];
+    S2 -> suffix [label = ""];
+}

@@ -1,0 +1,26 @@
+digraph {
+    graph [ rankdir=LR, size="8.5", overlap=false ];
+    node [ shape = doublecircle ];
+    SF [ label = SF ];
+    node [ shape = point ];
+    qi;
+    node [ shape = circle ];
+    root [ label = S ];
+    qi -> root;
+    root -> S1 [label = "digit" ];
+    S1 -> S1 [label = "digit" ];
+    S1 -> S3 [label = "dot" ];
+    S1 -> S4 [ label = "E"];
+    root -> S2 [label = "dot" ];
+    S2 -> S2 [ label = "digit" ];
+    S2 -> S4 [ label = "E" ];
+    S3 -> S3 [ label = "digit" ];
+    S3 -> S4 [ label = "E" ] ;
+    S4 -> S4 [ label = "integer" ];
+    S3 -> S5
+    S2 -> S5
+    S5 -> SF
+    S5 -> S6 [label = "F/L"];
+    S4 -> S6 [label = "F/L"];
+    S6 -> SF
+}
