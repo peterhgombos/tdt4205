@@ -14,6 +14,15 @@
 %option noyywrap
 %option yylineno
 
+d [0-9]
+l [a-zA-Z]
+
 %%
+FUNC        { RETURN( yytext[0] ); }
+PRINT       { RETURN( yytext[0] ); }
+RETURN      { RETURN( yytext[0] ); }
+[a-zA-Z][a-zA-Z0-9_]+ { RETURN( yytext[0] ); }
+[\ \t\n]+   {}
 .           { RETURN( yytext[0] ); }
+
 %%

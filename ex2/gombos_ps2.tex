@@ -1,10 +1,52 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\title{Problem Set 1}
+\title{Problem Set 2}
 \author{Péter H. Gombos}
 
 \begin{document}
 \maketitle
 \section*{Problem 1}
+\subsection*{a}
+\begin{tabular}{ c | c | c | c | c | c | r }
+
+
+NFA STATE & DFA STAE & a & b & c & d & e \\ \hline
+\{ 1, 4, 5 \} &    A     & B & \emptyset & \emptyset & B & D \\ \hline
+\{ 1, 2  \} & B &      B     & C & \emptyset & \emptyset & \emptyset \\ \hline
+\{ 2, 3 \} & C &  \emptyset & C & E & \emptyset & E \\ \hline
+\{ 5 \} & D & \emptyset & C & E & \emptyset & D \\ \hline
+\{ 3, 6 \} & E &  \emptyset & \emptyset & E & \emptyset & \emptyset \\ 
+\end{tabular}
+
+As a graph this automaton will look like
+\begin{center}
+\includegraphics[scale=0.7]{dfa.png}
+\end{center}
+\subsection*{b}
+The language 
+\begin{math}
+L = \{a^nb^n | n >= 1 \}
+\end{math}
+,that is the language with an equal number of a's and b's, is an example of a language 
+that can not be described by a regular expression. The reason for this is that a finite 
+automaton cannot keep a memory of the previous input given.
+
+\section*{Problem 2}
+\subsection*{a}
+An ambigious grammar is a grammar that can produce more than one parse tree. This is a 
+problem for parser because it cannot know which parse tree that is correct.
+
+\subsection*{b}
+No, as the grammar is postfix, and it is always only one way to parse any string in postfix.
+
+\subsection*{c}
+A left recursive grammar is a grammar where the left most symbol of the body is the same as 
+the head of the production. Some parsers will only change the look ahead symbol after a terminal
+in the body is matched. If the grammar is left recursive, it will always match the the same non 
+terminal as in the head with the first occurence of the same non terminal. This will cause the
+parser to loop forever.
+
+\subsection*{d}
+
 \end{document}
