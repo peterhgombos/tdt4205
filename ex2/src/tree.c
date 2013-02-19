@@ -54,10 +54,12 @@ void node_finalize ( node_t *discard ) {
 
 
 void destroy_subtree ( node_t *discard ){
-    for(int i = 0; i < discard->n_children; i++){
-        node_finalize(discard->children[i]);
+    if(discard->n_children == 0){
+        node_finalize(discard);
+        return;
     }
-    discard->n_children = 0;
+    while(discard->n_children > 0){
+        destroy_subtree(discard->children[discard->n_children]);
+        discard->n_children--;
+    }
 }
-
-

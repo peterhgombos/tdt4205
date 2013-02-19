@@ -92,9 +92,152 @@ int yylex ( void );                 /* Defined in the generated scanner */
  */ 
 
 %%
-program: '+' {
-    root = node_init ( malloc(sizeof(node_t)), program_n, NULL, 1, $1);}
+program: 
+        function_list {
+            root = node_init ( malloc(sizeof(node_t)), program_n, NULL, 1, $1);}
     ;
+function_list : 
+        function {
+             node_init(malloc(sizeof(node_t)), function_n, NULL, 1, $1);
+         }
+    |   function_list function { 
+            node_init(malloc(sizeof(node_t)),function_list_n,  NULL, 2, $1, $2);
+        }
+    ;
+statement_list:
+        statement {
+        }
+    |   statement_list statement {
+        }
+    ;
+print_list:
+        print_item {
+        }
+    |   print_list ',' print_item {
+        }
+    ;
+expression_list:
+        expression {
+        }
+    |   expression_list ',' expression {
+        }
+    ;
+variable_list:
+        variable {
+        }
+    |   variable_list ',' variable {
+        }
+    ;
+decleration_list:
+        decleration_list decleration {
+        }
+    |   /* empty */
+    ;
+argument_list:
+        expression_list {
+        }
+    |   /* empty */
+    ;
+parameter_list: 
+        variable_list {
+        }
+    |   /*empty */
+    ;
+function: 
+        FUNC variable '(' parameter_list ')' statement {
+        }
+    ;
+
+statement: 
+        assignment_statement {
+        }
+    |   return_statement {
+        }
+    |   if_statement {
+        }
+    |   while_statement {
+        }
+    |   for_statement {
+        }
+    |   null_statement {
+        }
+    |   block {
+        }
+    |   print_statement {
+        }
+    ;
+
+block:
+        '{' decleration_list statement_list '}' {
+        } 
+    ;
+assignment_statement:
+        variable ':''=' expression {
+        }
+    ;
+return_statement:
+        RETURN expression {
+        }
+    ;
+print_statement:
+        PRINT print_list {
+        }
+    ;
+if_statement:
+        IF expression THEN statement FI {
+        }
+    |   IF expression THEN statement ELSE statement FI {
+        }
+    ;
+while_statement:
+        WHILE expression DO statement DONE {
+        }
+    ;
+for_statement:
+        FOR expression TO expression DO statement DONE {
+        }
+    ;
+null_statement: CONTINUE {
+        }
+    ;
+
+expression:
+        expression '+' expression {
+        }
+    |   expression '-' expression {
+        }
+    |   expression '*' expression {
+        }
+    |   expression '/' expression {
+        }
+    |   expression '<' expression {
+        }
+    |   expression '>' expression {
+        }
+    ;
+decleration:
+        VAR variable_list {
+        }
+    ;
+variable: 
+        IDENTIFIER {
+        }
+    ; 
+integer: 
+        NUMBER {
+        }
+    ;
+print_item:
+        expression {
+        }
+    |   text {
+        }
+    ;
+text:
+        STRING {
+        }
+    ;
+
 
 %% 
 
