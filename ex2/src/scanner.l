@@ -21,8 +21,8 @@ l [a-zA-Z]
 FUNC        { RETURN( yytext[0] ); }
 PRINT       { RETURN( yytext[0] ); }
 RETURN      { RETURN( yytext[0] ); }
-[a-zA-Z][a-zA-Z0-9_]+ { RETURN( yytext[0] ); }
 [\ \t\n]+   {}
+[a-zA-Z][a-zA-Z0-9_]+ { RETURN( yytext[0] ); }
 .           { RETURN( yytext[0] ); }
 
 %%
