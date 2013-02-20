@@ -1,0 +1,22 @@
+digraph {
+    graph [ rankdir=LR, size="8.5", overlap=false ];
+    node [ shape = doublecircle ];
+    suffix [ label = E ];
+    node [ shape = point ];
+    qi;
+    node [ shape = circle ];
+    root [ label = A ];
+    qi -> root ;
+    root -> B [label =  "a"];
+    root -> B [label =  "d"];
+    root -> D [label =  "e"];
+    B -> B [label = "a" ];
+    B -> C [label = "b"];
+    C -> C [label = "b"];
+    C -> suffix [label = "c"];
+    C -> D [label = "e"];
+    D -> C [label = "b"];
+    D -> suffix [label = "c"];
+    D -> D [label = "e"];
+    suffix -> suffix [label = "c"];
+}
