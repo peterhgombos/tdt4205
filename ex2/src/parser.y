@@ -1,6 +1,10 @@
 %{
+#include <string.h>
+#include <stdlib.h>
+
 #include "nodetypes.h"
 #include "tree.h"
+
 
 /* This defines the type for every $$ value in the productions. */
 #define YYSTYPE node_t *
@@ -8,8 +12,8 @@
 
 /*
  * Convenience macros for repeated code. These macros are named CN for "create
- * node", number of children (3 is the most we need for a basic VSL syntax
- * tree), and with a trailing N or D for the data label (N is "NULL", D means
+* node", number of children (3 is the most we need for a basic VSL syntax
+* tree), and with a trailing N or D for the data label (N is "NULL", D means
  * something goes in the data pointer).
  */
 #define CN0D(type,data)\
@@ -98,143 +102,213 @@ program:
     ;
 function_list : 
         function {
-             node_init(malloc(sizeof(node_t)), function_n, NULL, 1, $1);
+            $$ = CN1N( function_list_n, $1);
          }
     |   function_list function { 
-            node_init(malloc(sizeof(node_t)),function_list_n,  NULL, 2, $1, $2);
+            $$ = CN2N( function_list_n, $1, $2);
         }
     ;
 statement_list:
         statement {
+            $$ = CN1N(statement_list_n, $1);
         }
     |   statement_list statement {
+            $$ = CN2N(statement_list_n, $1, $2);
         }
     ;
 print_list:
         print_item {
+            $$ = CN1N(print_list_n, $1);
         }
     |   print_list ',' print_item {
+            $$ = CN2N(print_list_n, $1, $3);
         }
     ;
 expression_list:
         expression {
+            $$ = CN1N(expression_list_n, $1);
         }
     |   expression_list ',' expression {
+            $$ = CN2N(expression_list_n, $1, $3);
         }
     ;
 variable_list:
         variable {
+            $$ = CN1N(variable_list_n, $1);
         }
     |   variable_list ',' variable {
+            $$ = CN2N(variable_list_n, $1, $3);
         }
     ;
-decleration_list:
-        decleration_list decleration {
+declaration_list:
+        declaration_list declaration {
+            $$ = CN2N(declaration_list_n, $1, $2);
         }
-    |   /* empty */
+    |   /*empty */{ $$ = NULL ;} 
     ;
 argument_list:
         expression_list {
+            $$ = CN1N(argument_list_n, $1);
         }
-    |   /* empty */
+    |   /*empty*/ { $$ = NULL; }
     ;
 parameter_list: 
         variable_list {
+            $$ = CN1N(parameter_list_n, $1);
         }
-    |   /*empty */
+    |   /*empty */ { $$ = NULL; }
     ;
 function: 
         FUNC variable '(' parameter_list ')' statement {
+            $$ = CN3N(function_n, $2, $4, $6);
         }
     ;
 
 statement: 
         assignment_statement {
+            $$ = CN1N(statement_n, $1);
         }
     |   return_statement {
+            $$ = CN1N(statement_n, $1);
         }
     |   if_statement {
+            $$ = CN1N(statement_n, $1);
         }
     |   while_statement {
+            $$ = CN1N(statement_n, $1);
         }
     |   for_statement {
+            $$ = CN1N(statement_n, $1);
         }
     |   null_statement {
+            $$ = CN1N(statement_n, $1);
         }
     |   block {
+            $$ = CN1N(statement_n, $1);
         }
     |   print_statement {
+            $$ = CN1N(statement_n, $1);
         }
     ;
 
 block:
-        '{' decleration_list statement_list '}' {
+        '{' declaration_list statement_list '}' {
+            $$ = CN2N(block_n, $2, $3);
         } 
     ;
 assignment_statement:
-        variable ':''=' expression {
+        variable ASSIGN expression {
+            $$ = CN2N(assignment_statement_n, $1, $3);
         }
     ;
 return_statement:
         RETURN expression {
+            $$ = CN1N(return_statement_n, $2);
         }
     ;
 print_statement:
         PRINT print_list {
+            $$ = CN1N(print_statement_n, $2);
         }
     ;
 if_statement:
         IF expression THEN statement FI {
+            $$ = CN2N(if_statement_n, $2, $4);
         }
     |   IF expression THEN statement ELSE statement FI {
+            $$ = CN3N(if_statement_n, $2, $4, $6);
         }
     ;
 while_statement:
         WHILE expression DO statement DONE {
+            $$ = CN2N(while_statement_n, $2, $4);
         }
     ;
 for_statement:
         FOR expression TO expression DO statement DONE {
+            $$ = CN3N(for_statement_n, $2, $4, $6);
         }
     ;
 null_statement: CONTINUE {
+            $$ = CN0N(null_statement_n);
         }
     ;
 
 expression:
         expression '+' expression {
+            $$ = CN2D(expression_n, STRDUP("+"), $1, $3);
         }
     |   expression '-' expression {
+            $$ = CN2D(expression_n, STRDUP("-"), $1, $3);
         }
     |   expression '*' expression {
+            $$ = CN2D(expression_n, STRDUP("*"), $1, $3);
         }
     |   expression '/' expression {
+            $$ = CN2D(expression_n, STRDUP("/"), $1, $3);
         }
     |   expression '<' expression {
+            $$ = CN2D(expression_n, STRDUP("<"), $1, $3);
         }
     |   expression '>' expression {
+            $$ = CN2D(expression_n, STRDUP(">"), $1, $3);
+        }
+    |   UMINUS expression {
+            $$ = CN1D(expression_n, STRDUP("-"), $2);
+        }
+    |   expression EQUAL expression {
+            $$ = CN2D(expression_n, STRDUP("=="), $1, $3);
+        }
+    |   expression NEQUAL expression {
+            $$ = CN2D(expression_n, STRDUP("!="), $1, $3);
+        }
+    |   expression LEQUAL expression {
+            $$ = CN2D(expression_n, STRDUP("<="), $1, $3);
+        }
+    |   expression GEQUAL expression {
+            $$ = CN2D(expression_n, STRDUP(">="), $1, $3);
+        }
+    |   '(' expression ')' {
+            $$ = CN1D(expression_n, STRDUP("nil"), $2);
+        }
+    |   integer {
+            $$ = CN1N(expression_n, $1);
+        }
+    |   variable {
+            $$ = CN1N(expression_n, $1);
+        }
+    |   variable '(' variable_list ')' {
+            $$ = CN2D(expression_n, STRDUP("F"), $1, $3);
         }
     ;
-decleration:
+declaration:
         VAR variable_list {
+            $$ = CN1N(declaration_n, $2);
         }
     ;
 variable: 
         IDENTIFIER {
+            $$ = CN0D(variable_n, STRDUP(yytext));
         }
     ; 
 integer: 
         NUMBER {
+            int *p = malloc(sizeof(int));
+            *p = atoi(STRDUP(yytext));
+            $$ = CN0D(integer_n, p);
         }
     ;
 print_item:
         expression {
+            $$ = CN1N(print_item_n, $1);
         }
     |   text {
+            $$ = CN1N(print_item_n, $1);
         }
     ;
 text:
         STRING {
+            $$ = CN0D(text_n, STRDUP(yytext));
         }
     ;
 

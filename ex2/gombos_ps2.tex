@@ -47,6 +47,14 @@ in the body is matched. If the grammar is left recursive, it will always match t
 terminal as in the head with the first occurence of the same non terminal. This will cause the
 parser to loop forever.
 
-\subsection*{d}
 
+\section*{Problem 5}
+\subsection*{a}
+A bottom-up parser will look at the terminals first, keeping a stack of all the characters and
+tokens seen so far. If possible, it will combine the characters using the productions. Top-down
+parsing, on the other hand, starts by assuming that the starting string matches the initial 
+production, and tries to "solve" the string by doing the different productions.
+
+\subsection*{b}
+An LL parser is a top-down parser, while an LR parser is bottom-up.
 \end{document}

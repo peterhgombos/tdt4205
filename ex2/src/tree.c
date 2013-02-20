@@ -31,13 +31,13 @@ node_print ( FILE *output, node_t *root, uint32_t nesting )
 node_t * node_init ( node_t *nd, nodetype_t type, void *data, uint32_t n_children, ... ) {
     va_list args;
     va_start( args, n_children);
-    struct n **children = (struct n **)malloc(n_children*sizeof(node_t));
+    struct n **children = (struct n **)malloc(n_children*sizeof(struct n *));
     for(int i = 0; i < n_children; i++){
-        *children[i] = va_arg(args, node_t);
+        children[i] = va_arg(args, node_t*);
     }
     va_end(args);
     
-    node_t *node;
+    node_t *node = malloc(sizeof(node_t));
     node->type = type;
     node->data = data;
     node->n_children = n_children;
@@ -50,16 +50,16 @@ void node_finalize ( node_t *discard ) {
    free(discard->data);
    free(discard->entry);
    free(discard->children);
+   free(discard);
 }
 
 
 void destroy_subtree ( node_t *discard ){
-    if(discard->n_children == 0){
-        node_finalize(discard);
-        return;
+    if(discard == NULL) return;
+
+    for(int i =0; i < discard->n_children; i++){
+        destroy_subtree(discard->children[i]);
+        node_finalize(discard->children[i]);
     }
-    while(discard->n_children > 0){
-        destroy_subtree(discard->children[discard->n_children]);
-        discard->n_children--;
-    }
+    
 }

@@ -14,15 +14,33 @@
 %option noyywrap
 %option yylineno
 
-d [0-9]
-l [a-zA-Z]
 
 %%
-FUNC        { RETURN( yytext[0] ); }
-PRINT       { RETURN( yytext[0] ); }
-RETURN      { RETURN( yytext[0] ); }
-[\ \t\n]+   {}
-[a-zA-Z][a-zA-Z0-9_]+ { RETURN( yytext[0] ); }
-.           { RETURN( yytext[0] ); }
+FUNC                        { RETURN(FUNC); }
+PRINT                       { RETURN(PRINT); }
+RETURN                      { RETURN(RETURN); }
+CONTINUE                    { RETURN(CONTINUE); }
+IF                          { RETURN(IF); }
+THEN                        { RETURN(THEN); }
+ELSE                        { RETURN(ELSE); }
+FI                          { RETURN(FI); }
+WHILE                       { RETURN(WHILE); }
+DO                          { RETURN(DO); }
+DONE                        { RETURN(DONE); }
+FOR                         { RETURN(FOR); }
+TO                          { RETURN(TO); }
+VAR                         { RETURN(VAR); }
+:=                          { RETURN(ASSIGN); }
+==                          { RETURN(EQUAL); }
+!=                          { RETURN(NEQUAL); }
+\<=                         { RETURN(LEQUAL); }
+>=                          { RETURN(GEQUAL); }
+[a-zA-Z][a-zA-Z0-9_]*       { RETURN(IDENTIFIER); }
+[0-9]+                      { RETURN(NUMBER); }
+\"([^"]|\\\")*\"            { RETURN(STRING); }
+[\ \t\n\s]+                 { ; }
+\/\/.+                      { ; }
+.                           { RETURN( yytext[0] ); }
 
 %%
+
