@@ -35,10 +35,10 @@ VAR                         { RETURN(VAR); }
 !=                          { RETURN(NEQUAL); }
 \<=                         { RETURN(LEQUAL); }
 >=                          { RETURN(GEQUAL); }
-[a-zA-Z][a-zA-Z0-9_]*       { RETURN(IDENTIFIER); }
+[a-zA-Z_][a-zA-Z0-9_]*      { RETURN(IDENTIFIER); }
 [0-9]+                      { RETURN(NUMBER); }
 \"([^"]|\\\")*\"            { RETURN(STRING); }
-[\ \t\n\s]+                 { ; }
+[\ \t\n]+                   { ; }
 \/\/.+                      { ; }
 .                           { RETURN( yytext[0] ); }
 

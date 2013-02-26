@@ -225,7 +225,7 @@ while_statement:
         }
     ;
 for_statement:
-        FOR expression TO expression DO statement DONE {
+        FOR assignment_statement TO expression DO statement DONE {
             $$ = CN3N(for_statement_n, $2, $4, $6);
         }
     ;
@@ -253,7 +253,7 @@ expression:
     |   expression '>' expression {
             $$ = CN2D(expression_n, STRDUP(">"), $1, $3);
         }
-    |   UMINUS expression {
+    |   '-' expression {
             $$ = CN1D(expression_n, STRDUP("-"), $2);
         }
     |   expression EQUAL expression {
@@ -269,7 +269,7 @@ expression:
             $$ = CN2D(expression_n, STRDUP(">="), $1, $3);
         }
     |   '(' expression ')' {
-            $$ = CN1D(expression_n, STRDUP("nil"), $2);
+            $$ = CN1N(expression_n, $2);
         }
     |   integer {
             $$ = CN1N(expression_n, $1);
@@ -277,7 +277,7 @@ expression:
     |   variable {
             $$ = CN1N(expression_n, $1);
         }
-    |   variable '(' variable_list ')' {
+    |   variable '(' argument_list ')' {
             $$ = CN2D(expression_n, STRDUP("F"), $1, $3);
         }
     ;

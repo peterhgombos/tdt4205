@@ -37,18 +37,17 @@ node_t * node_init ( node_t *nd, nodetype_t type, void *data, uint32_t n_childre
     }
     va_end(args);
     
-    node_t *node = malloc(sizeof(node_t));
-    node->type = type;
-    node->data = data;
-    node->n_children = n_children;
-    node->children = children;
-    return node;
+    nd = (node_t *)malloc(sizeof(node_t));
+    nd->type = type;
+    nd->data = data;
+    nd->n_children = n_children;
+    nd->children = children;
+    return nd;
 }
 
 
 void node_finalize ( node_t *discard ) {
    free(discard->data);
-   free(discard->entry);
    free(discard->children);
    free(discard);
 }
@@ -59,7 +58,7 @@ void destroy_subtree ( node_t *discard ){
 
     for(int i =0; i < discard->n_children; i++){
         destroy_subtree(discard->children[i]);
-        node_finalize(discard->children[i]);
     }
+    node_finalize(discard);
     
 }
