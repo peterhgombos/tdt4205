@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\title{Problem Set 3}
+\author{Péter H. Gombos}
+
+\begin{document}
+\maketitle
+\section*{Problem 1}
+\begin{tabular}{ l   r   r  l }
+    \hline \\
+    Matched      &   Stack   & Input         & Action    \\ \hline
+                 &   S\$     & ig+gtwgtsee   &           \\ 
+                 &   I\$     & ig+gtwgtsee   & output \emph{S} \rightarrow \emph{I} \\ 
+                 &   iEtSe\$ & ig+gtwgtsee   & output \emph{I} \rightarrow \emph{iEtSe} \\ 
+    i            &   EtSe\$  & g+gtwgtsee    & match \textbf{i} \\
+    i            &   gFtSe\$ & g+gtwgtsee    & output \emph{E} \rightarrow \emph{gF} \\
+    ig           &   FtSe\$  & +gtwgtsee     & match \textbf{g} \\
+    ig           &   +gFtSe\$& +gtwgtsee     & output \emph{F} \rightarrow \emph{+gF} \\
+    ig+g         &   FtSe\$  & tgwgtsee      & match \textbf{+g}\\
+    ig+g         &   tSe\$   & twgtsee       & output \emph{F} \rightarrow \epsilon \\  
+    ig+gt        &   Se\$    & wgtsee        & match \textbf{t}\\
+    ig+gt        &   We\$    & wgtsee        & output \emph{S} \rightarrow \emph{W} \\
+    ig+gt        &   wEtSee\$& wgtsee        & output \emph{W} \rightarrow \emph{wEtSe} \\
+    ig+gtw       &   EtSee\$ & gtsee         & match \textbf{w}\\
+    ig+gtw       &   gFtSee\$& gtsee         & output \emph{E} \rightarrow \emph{gF} \\
+    ig+gtwg      &   FtSee\$ & tsee          & match \textbf{g} \\
+    ig+gtwg      &   tSee\$  & tsee          & output \emph{F} \rightarrow \epsilon \\
+    ig+gtwgt     &   See\$   & see           & match \textbf{t}\\
+    ig+gtwgt     &   see\$   & see           & output \emph{S} \rightarrow \emph{s} \\
+    ig+gtwgtsee  &   \$      &               & match \textbf{see}\\
+\end{tabular}
+
+\section*{Problem 2}
+\subsection*{a}
+A \emph{shift/reduce} conflict occurs if the parser, when it knows the entire stack and
+the next \em{k} input symbols, cannot decide wheter to shift or reduce. A
+\em{reduce/reduce} conflict, on the other hand, occurs if it cannot decide between
+different reductions it could make.
+
+\subsection*{b}
+$4 + 2 * 3$ is an input string that wil be correctly parsed if the parserer resolves
+shift/reduce conflicts by shifting. $2 * 3 + 4$ however, will be parsed wrong, giving
+the plus higher precedence.
+
+\subsection*{c}
+Analougus to the last task, $2 * 3 + 4$ will be parsed correctly, while $4 + 2 *
+3$ will give an error if reducing is the way to resolve shift/reduce conflicts.
+
+\end{document}
