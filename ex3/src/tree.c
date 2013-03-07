@@ -1,4 +1,5 @@
 #include "tree.h"
+#include <stdio.h>
 
 
 #ifdef DUMP_TREES
@@ -47,8 +48,8 @@ node_t* simplify_tree ( node_t* node )
             case EXPRESSION_LIST: case VARIABLE_LIST:
                 if(node->n_children > 1){
                     node_t *temp, *simplified;
-                    temp = node->children[1];
-                    simplified = simplify_tree(node->children[0]);
+                    temp = node->children[node->n_children - 1];
+                    node->n_children += simplified->n_children;
                     node->children = realloc(node->children, (1 + simplified->n_children)*sizeof(node_t));
                     for(int i = 0; i < simplified->n_children; i++){
                         node->children[i] = simplified->children[i];
@@ -61,7 +62,7 @@ node_t* simplify_tree ( node_t* node )
                     node->data = node->children[0]->data;
                     node->entry = node->children[0]->entry;
                     node->n_children = 0;
-                    //destroy_subtree(node->children[0]);
+                    node_finalize(node->children[0]);
                 }
                 break;
 
@@ -69,6 +70,23 @@ node_t* simplify_tree ( node_t* node )
             // Declaration lists should also be flattened, but their stucture is sligthly
             // different, so they need their own case
             case DECLARATION_LIST:
+                if(node->n_children > 1){
+                    node_t *temp, *simplified;
+                    temp = node->children[node->n_children -1];
+                    node->n_children += simplified->n_children;
+                    node->children = realloc(node->children, (1+simplified->n_children)*sizeof(node_t));
+                    for(int i = 0; i < simplified->n_children; i++){
+                        node->children[i] = simplified->children[i];
+                    }
+                    node->children[simplified->n_children] = temp;
+                }
+                else if (node->n_children == 1){
+                    node->type = node->children[0]->type;
+                    node->data = node->children[0]->data;
+                    node->entry = node->children[0]->entry;
+                    node->n_children = 0;
+                    node_finalize(node->children[0]);
+                }
                 break;
 
             
@@ -78,7 +96,7 @@ node_t* simplify_tree ( node_t* node )
                 node->data = node->children[0]->data;
                 node->entry = node->children[0]->entry;
                 node->n_children = 0;
-                //destroy_subtree(node->children[0]);
+                node_finalize(node->children[0]);
                 break;
 
 
@@ -90,7 +108,7 @@ node_t* simplify_tree ( node_t* node )
                     node->data = node->children[0]->data;
                     node->entry = node->children[0]->entry;
                     node->n_children = 0;
-                    //destroy_subtree(node->children[0]);
+                    node_finalize(node->children[0]);
                 }
                 else if( node->n_children = 2){
                     if(node->children[0]->type.index == INTEGER && node->children[0]->type.index == INTEGER){
@@ -117,8 +135,8 @@ node_t* simplify_tree ( node_t* node )
                         node->data = &result;
                         node->entry = node->children[0]->entry;
                         node->n_children = 0;
-                        //destroy_subtree(node->children[0]);
-                        //destroy_subtree(node->children[1]);
+                        node_finalize(node->children[0]);
+                        node_finalize(node->children[1]);
 
 
                     }
