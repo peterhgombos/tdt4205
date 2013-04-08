@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\title{Problem Set 4}
+\author{Péter H. Gombos}
+
+\begin{document}
+\maketitle
+\section*{Problem 1}
+\subsection*{a}
+The grammar is not left-recursive, as it is not recursive at all. None of the
+non-terminals rewrites to itself in any way.
+
+\subsection*{b}
+The grammar is ambigious, as the parse tree of the string \emph{"zz"} can be
+obtained by using the production $C \rightarrow \epsilon$ in two different
+places.
+
+\section*{Problem 2}
+\subsection*{a}
+All three of the grammars follow the first two conditions for an LL(1) grammar,
+that is the productions starts with the same non-terminal, and that only one of
+the productions produces the empty string. To fully decide if the grammars are
+LL(1), we have to consider the FIRST and FOLLOW sets of the grammars. All of
+the grammars have these sets equal, as the string must start with either empty
+string or \emph{a}, and follows the same terminals. As the FOLLOW set will be
+$\{a, \epsilon, \$\}$, and the production not leading to the empty string will
+produce a string starting with \emph{a}, none of the grammars are LL(1).
+
+\subsection*{b}
+The language, that is all strings with an even number of a's, or the empty
+string, is regular. A regular expression to recognise this language is $a\{2\}*$.
+
+\section*{Problem 3}
+\subsection*{a}
+\begin{tabular}{ c | c | c}
+matched symbol & production & string \\ \hline
+S & B & B \\
+B & Sb & Sb \\
+S & A & Ab \\
+A & xAy & xAyb \\
+A & xAy & xxAyyb \\
+A & z & xxzyyb
+\end{tabular}
+
+\subsection*{b}
+
+
+\section*{Problem 4}
+A parser with backtracking may require repeated scans over the input. Instead of
+choosing the correct production to follow, it will try each possible, and only
+return a failure if none of the production was correct after testing all of
+them.
+
+\section*{Problem 5}
+\subsection*{a}
+A hash table will give near constant time look up, and most of the operations on
+a symbol table will be look ups. By using a bit more time on the insert and
+delete operations, a hash table will the most efficient implementation for
+symbol tables.
+
+\subsection*{b}
+Symbol tables stores information about identifiers, e.g. its lexeme (or
+character string), type, position in storage.
+
+
+\end{document}
