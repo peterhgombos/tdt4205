@@ -106,7 +106,7 @@ void generate ( FILE *stream, node_t *root )
             /* TODO: Insert a call to the first defined function here */
             instruction_add(CALL, STRDUP( root->children[0]->data ), NULL, 0, 0);
             instruction_add(LEAVE, NULL, NULL, 0, 0);
-            instruction_add(PUSH, eax, NULL, 0, 0):
+            instruction_add(PUSH, eax, NULL, 0, 0);
             instruction_add(SYSCALL, STRDUP("exit"), NULL, 0, 0);
 
             TEXT_TAIL();
@@ -155,8 +155,8 @@ void generate ( FILE *stream, node_t *root )
              * Declarations:
              * Add space on local stack
              */
-            for ( int = 0; int < root->children[0]->n_children; i++){
-                instruction_add(PUSH, STRDUP($0), NULL, 0, 0); 
+            for ( int i = 0; i < root->children[0]->n_children; i++){
+                instruction_add(PUSH, STRDUP("$0"), NULL, 0, 0); 
             }
 
             break;
@@ -219,7 +219,7 @@ void generate ( FILE *stream, node_t *root )
                 else {
                     instruction_add(POP, ebx, NULL, 0, 0);
                     instruction_add(POP, ebx, NULL, 0, 0);
-                    switch(root->data){
+                    switch(*((char *)root->data)){
                         case '+':
                             instruction_add(ADD, ebx, eax, 0, 0);
                             break;
@@ -227,11 +227,11 @@ void generate ( FILE *stream, node_t *root )
                             instruction_add(SUB, ebx, eax, 0, 0);
                             break;
                         case '*':
-                            instruction_add(CLTD, NULL, 0, 0);
+                            instruction_add(CLTD, NULL, NULL, 0, 0);
                             instruction_add(MUL, ebx, NULL, 0, 0);
                             break;
-                        case '*':
-                            instruction_add(CLTD, NULL, 0, 0);
+                        case '/':
+                            instruction_add(CLTD, NULL, NULL, 0, 0);
                             instruction_add(DIV, ebx, NULL, 0, 0);
                             break;
                     }
@@ -258,11 +258,13 @@ void generate ( FILE *stream, node_t *root )
             * - Find the variable's stack offset
             * - If var is not local, unwind the stack to its correct base
             */
-            int offset = root->entry->stack_offset;
-            instruction_add(MOVE, ebp, ecx, 0, 0);
-            for(int i = 0; i < (depth-(root->entry->depth)); i++)
-               instruction_add(MOVE, ecx, ecx, 4, 0);
-            instruction_add(PUSH, ecx, NULL, offset, 0);
+            if(root->entry->label == NULL){
+                int offset = root->entry->stack_offset;
+                instruction_add(MOVE, ebp, ecx, 0, 0);
+                for(int i = 0; i < (depth-(root->entry->depth)); i++)
+                   instruction_add(MOVE, ecx, ecx, 4, 0);
+                instruction_add(PUSH, ecx, NULL, offset, 0);
+            }
 
 
             break;
@@ -271,10 +273,11 @@ void generate ( FILE *stream, node_t *root )
            /*
             * Integers: constants which can just be put on stack
             */
-
-            char value[13];
-            sprintf(value, "$%d\0", *((int32_t *)root-data));
-            instruction_add(PUSH, STRDUP(value), NULL, 0, 0);
+            {
+                char value[13];
+                sprintf(value, "$%d\0", *((int32_t *)root->data));
+                instruction_add(PUSH, STRDUP(value), NULL, 0, 0);
+            }
 
 
             break;
@@ -291,7 +294,7 @@ void generate ( FILE *stream, node_t *root )
             instruction_add(MOVE, ebp, ecx, 0, 0);
             for (int i = 0; i < (depth - (root->children[0]->entry->depth)); i++)
                 instruction_add(MOVE, ecx, ecx, 4, 0);
-            instruction_add(MOVE, eax, ecx, 0, root->children[0]->endtry->stack_offset);
+            instruction_add(MOVE, eax, ecx, 0, root->children[0]->entry->stack_offset);
 
             break;
 
