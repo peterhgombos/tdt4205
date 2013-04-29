@@ -543,41 +543,59 @@ void generate ( FILE *stream, node_t *root )
         case WHILE_STATEMENT:
             {
                 /* create labels */
-                char[1+lcount_length(lcount)] startlabel;
-                sprintf(startlalbel, "l%", lcount);
-                char[2+lcount_length(lcount)] startlabel_colon;
-                sprintf(startlabel_colon, "l%:", lcount);
+                char startlabel[1+lcount_length(lcount)] ;
+                sprintf(startlabel, "l%d", lcount);
+                char startlabel_colon[2+lcount_length(lcount)];
+                sprintf(startlabel_colon, "l%d:", lcount);
                  
-                char[1+lcount_length(lcount)] donelabel;
-                sprintf(donelalbel, "l%d", lcount);
-                char[2+lcount_length(lcount)] donelabel_colon;
-                sprintf(donelalbel_colon, "l%d:", lcount);
+                char donelabel[1+lcount_length(lcount)];
+                sprintf(donelabel, "l%dd", lcount);
+                char donelabel_colon[2+lcount_length(lcount)];
+                sprintf(donelabel_colon, "l%dd:", lcount);
                 lcount++;
 
                 instruction_add(STRING, STRDUP(startlabel_colon), NULL, 0, 0);
-                generate(stream, root->children[0], NULL, 0, 0);
+                generate(stream, root->children[0]);
                 instruction_add(POP, eax, NULL, 0, 0);
                 instruction_add(CMP, STRDUP("$0"), eax, 0, 0);
                 instruction_add(JUMPEQ, STRDUP(donelabel), NULL, 0, 0);
                 generate(stream, root->children[1]);
                 instruction_add(JUMP, STRDUP(startlabel), NULL, 0, 0);
-                instruction_add(STRING, STRDUP(donelabel_colon);
+                instruction_add(STRING, STRDUP(donelabel_colon), NULL, 0, 0);
                 
             }
             break;
 
         case FOR_STATEMENT:  
-        		RECUR();
+            {
+                /* create labels */
+                char startlabel[1+lcount_length(lcount)];
+                sprintf(startlabel, "l%d", lcount);
+                char startlabel_colon[2+lcount_length(lcount)];
+                sprintf(startlabel_colon, "l%d:", lcount);
+                 
+                char filabel[1+lcount_length(lcount)];
+                sprintf(filabel, "l%df", lcount);
+                char filabel_colon[2+lcount_length(lcount)];
+                sprintf(filabel_colon, "l%df:", lcount);
+                lcount++;
+
+                generate(stream, root->children[0]);
+
+                instruction_add(POP, ebx, NULL, 0, 0);
+                instruction_add(STRING, STRDUP(startlabel_colon), NULL, 0, 0);
+
+            }
             break;
             
         case IF_STATEMENT:
-            if(node->n_children == 2){
+            if(root->n_children == 2){
                 /* IF-THEN-FI */
 
                 /* create label */
-                char[1+lcount_length(lcount)] filabel;
+                char filabel[1+lcount_length(lcount)];
                 sprintf(filabel, "l%d", lcount);
-                char[2+lcount_length(lcount)] filabel_colon;
+                char filabel_colon[2+lcount_length(lcount)];
                 sprintf(filabel_colon, "l%d:", lcount);
                 lcount++;
 
@@ -591,18 +609,18 @@ void generate ( FILE *stream, node_t *root )
                 /* generate code inside */
                 generate(stream, root->children[1]);
                 instruction_add(STRING, STRDUP(filabel_colon), NULL, 0, 0);
-            } else if (node->n_children ==3){
+            } else if (root->n_children ==3){
                 /* IF-THEN-ELSE-FI */
                 /* create labels */
-                char[1+lcount_length(lcount)] elselabel;
+                char elselabel[1+lcount_length(lcount)];
                 sprintf(elselabel, "l%d", lcount);
-                char[2+lcount_length(lcount)] elselabel_colon;
+                char elselabel_colon[2+lcount_length(lcount)];
                 sprintf(elselabel_colon, "l%d:", lcount);
                  
-                char[1+lcount_length(lcount)] filabel;
-                sprintf(filabel, "l%d", lcount);
-                char[2+lcount_length(lcount)] filabel_colon;
-                sprintf(filabel_colon, "l%d:", lcount);
+                char filabel[1+lcount_length(lcount)];
+                sprintf(filabel, "l%df", lcount);
+                char filabel_colon[2+lcount_length(lcount)];
+                sprintf(filabel_colon, "l%df:", lcount);
                 lcount++;
 
                 /* generate expression */
