@@ -103,7 +103,6 @@ void generate ( FILE *stream, node_t *root )
             RECUR();
             TEXT_HEAD();
 
-            /* TODO: Insert a call to the first defined function here */
             instruction_add(CALL, STRDUP( root->children[0]->data ), NULL, 0, 0);
             instruction_add(LEAVE, NULL, NULL, 0, 0);
             instruction_add(PUSH, eax, NULL, 0, 0);
