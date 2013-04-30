@@ -582,8 +582,19 @@ void generate ( FILE *stream, node_t *root )
 
                 generate(stream, root->children[0]);
 
-                instruction_add(POP, ebx, NULL, 0, 0);
+                instruction_add(POP, ecx, NULL, 0, 0);
+                generate(stream, root->children[1]);
+                instruction_add(POP, eax, NULL, 0, 0);
                 instruction_add(STRING, STRDUP(startlabel_colon), NULL, 0, 0);
+                instruction_add(CMP, eax, ecx, 0, 0);
+                instruction_add(SETL, eax, NULL, 0, 0);
+                instruction_add(JUMPEQ, STRDUP(filabel), NULL, 0, 0);
+                generate(stream, root->children[2]);
+                instruction_add(ADD, STRDUP("$1"), eax, 0, 0);
+                instruction_add(JUMP, STRDUP(startlabel), NULL, 0, 0);
+                instruction_add(STRING, STRDUP(filabel_colon), NULL, 0, 0);
+
+
 
             }
             break;
